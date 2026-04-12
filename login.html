@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-box { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .auth-box h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #333; font-weight: bold;}
+        .form-group input[type="text"], .form-group input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .remember-group { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .remember-group label { margin: 0; font-weight: normal; cursor: pointer; color: #555; }
+        .btn { width: 100%; padding: 10px; background-color: #27ae60; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;}
+        .btn:hover { background-color: #2ecc71; }
+        .link { text-align: center; margin-top: 15px; }
+        .link a { color: #27ae60; text-decoration: none; font-weight: bold;}
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <h2>Đăng Nhập</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Tên đăng nhập:</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu:</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="remember-group">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Nhớ tài khoản và mật khẩu</label>
+            </div>
+            <button type="submit" class="btn">Đăng Nhập</button>
+        </form>
+        <div class="link">
+            Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('saved_username');
+            const savedPass = localStorage.getItem('saved_password');
+            if (savedUser && savedPass) {
+                document.getElementById('username').value = savedUser;
+                document.getElementById('password').value = savedPass;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            const data = {
+                username: usernameInput,
+                password: passwordInput
+            };
+
+            try {
+                const response = await fetch('http://localhost/api/auth.php?action=login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (rememberMe) {
+                        localStorage.setItem('saved_username', usernameInput);
+                        localStorage.setItem('saved_password', passwordInput);
+                    } else {
+                        localStorage.removeItem('saved_username');
+                        localStorage.removeItem('saved_password');
+                    }
+
+                    alert('Đăng nhập thành công!');
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Sai thông tin: ' + result.message);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối đến máy chủ.');
+            }
+        });
+    </script>
+</body>
+</html>

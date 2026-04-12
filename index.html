@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sàn Giao Dịch Phòng Trọ</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; padding-bottom: 60px; }
+        .navbar { background-color: #2c3e50; padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; margin-left: 15px; }
+        .navbar a:hover { color: #3498db; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+        
+        .notif-badge { position: relative; cursor: pointer; display: inline-block; margin-right: 15px; }
+        .notif-count { position: absolute; top: -8px; right: -10px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; }
+        
+        .notif-dropdown { display: none; position: absolute; right: -10px; top: 35px; width: 330px; background: #f4f6f9; box-shadow: 0 8px 20px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000; max-height: 350px; overflow-y: auto; padding: 15px; text-align: left; }
+        .notif-item { background: #ffffff; border: 1px solid #e1e8ed; border-left: 5px solid #bdc3c7; padding: 12px 15px; margin-bottom: 12px; border-radius: 6px; font-size: 13px; color: #2c3e50; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .notif-item:last-child { margin-bottom: 0; }
+        .notif-item.unread { background: #fff4f4; border-left-color: #e74c3c; font-weight: bold; }
+        .notif-time { display: block; color: #7f8c8d; font-size: 11px; margin-top: 8px; font-style: italic; font-weight: normal; }
+        .notif-empty { text-align: center; color: #7f8c8d; padding: 10px; font-size: 13px; }
+
+        .filter-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+        .filter-group { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
+        .filter-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .filter-group select, .filter-group input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: white; }
+        .filter-actions { display: flex; gap: 10px; align-items: flex-end; }
+        .btn-filter { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; height: 38px; }
+        .btn-nearme { background: #e67e22; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; height: 38px; }
+
+        .room-list { display: flex; flex-direction: column; gap: 20px; }
+        .room-card { display: flex; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; }
+        .room-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .room-card-img { width: 280px; height: 210px; object-fit: cover; flex-shrink: 0; }
+        .room-card-content { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+        .room-title { color: #d35400; font-size: 1.15em; margin: 0 0 10px 0; line-height: 1.4; }
+        .room-meta { display: flex; align-items: center; gap: 15px; font-weight: bold; margin-bottom: 10px; }
+        .room-price { color: #e74c3c; font-size: 1.2em; }
+        .room-address { color: #7f8c8d; margin: 0 0 10px 0; font-size: 0.9em; }
+        .room-desc-short { color: #555; font-size: 0.9em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0; line-height: 1.5; }
+        .lessor-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
+        
+        .badge { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px; margin-right: 5px; }
+        .badge-distance { background: #9b59b6; }
+        
+        .btn-fav { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.9); border: 1px solid #e74c3c; color: #e74c3c; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-weight: bold; z-index: 10; }
+        .btn-fav.active { background: #e74c3c; color: white; }
+
+        .compare-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #34495e; color: white; padding: 15px 0; text-align: center; display: none; z-index: 999; }
+        .btn-compare-action { background: #f1c40f; color: #2c3e50; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+        
+        .detail-modal-body { background: #f4f4f9; width: 100%; height: 100%; overflow-y: auto; display: block; position: relative; }
+        .detail-container { max-width: 1100px; margin: 0 auto; display: flex; gap: 20px; padding: 40px 20px; box-sizing: border-box; }
+        .detail-left { flex: 2; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .detail-right { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .detail-close-btn { position: fixed; top: 15px; right: 25px; background: #fff; width: 40px; height: 40px; border-radius: 50%; text-align: center; line-height: 40px; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1002; color: #333; }
+        
+        .detail-gallery-main { width: 100%; height: 450px; object-fit: cover; border-radius: 8px; background: #000; }
+        .thumbnail-container { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .thumbnail-container img { height: 70px; width: 70px; object-fit: cover; cursor: pointer; border-radius: 4px; opacity: 0.6; border: 2px solid transparent; }
+        .thumbnail-container img.active { opacity: 1; border-color: #3498db; }
+
+        .lessor-card { background: #fff; padding: 25px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .lessor-avatar { width: 70px; height: 70px; background: #bdc3c7; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; font-weight: bold; }
+        .action-btn { width: 100%; padding: 12px; margin-top: 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .btn-call { background: #2ecc71; color: white; }
+        .btn-chat { background: #3498db; color: white; }
+        
+        .report-card { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-report { background: none; border: none; color: #7f8c8d; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; width: 100%; padding: 12px 0; border-bottom: 1px solid #ecf0f1; transition: 0.2s; }
+        .btn-report:hover { color: #e74c3c; font-weight: bold; }
+        .btn-report:last-child { border-bottom: none; }
+
+        .chat-modal-content { background: #fff; width: 90%; max-width: 500px; padding: 20px; border-radius: 8px; position: relative; }
+        .chat-messages { height: 300px; overflow-y: auto; background: #f9f9f9; padding: 10px; margin-bottom: 15px; border: 1px solid #eee; border-radius: 4px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; }
+        .chat-msg.me { background: #3498db; color: white; align-self: flex-end; }
+        .chat-msg.them { background: #e0e0e0; color: #333; align-self: flex-start; }
+        .chat-input-group { display: flex; gap: 10px; }
+        .chat-input-group input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-send { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .room-card { flex-direction: column; }
+            .room-card-img { width: 100%; height: 220px; }
+            .detail-container { flex-direction: column; padding: 60px 10px 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div><h2>TrọTốt.vn</h2></div>
+        <div id="nav-links"></div>
+    </div>
+
+    <div class="container">
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Khu vực</label>
+                <input type="text" id="fLocation" placeholder="Nhập địa điểm...">
+            </div>
+            <div class="filter-group">
+                <label>Mức giá thuê</label>
+                <select id="fPriceRange">
+                    <option value="">Tất cả mức giá</option>
+                    <option value="0-1000000">Dưới 1 triệu</option>
+                    <option value="1000000-3000000">1 - 3 triệu</option>
+                    <option value="3000000-5000000">3 - 5 triệu</option>
+                    <option value="5000000-10000000">5 - 10 triệu</option>
+                    <option value="10000000-999000000">Trên 10 triệu</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Diện tích</label>
+                <select id="fAreaRange">
+                    <option value="">Tất cả diện tích</option>
+                    <option value="0-20">Dưới 20 m²</option>
+                    <option value="20-30">20 - 30 m²</option>
+                    <option value="30-50">30 - 50 m²</option>
+                    <option value="50-500">Trên 50 m²</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button class="btn-filter" onclick="applyFilters()">Lọc</button>
+                <button class="btn-nearme" onclick="findNearMe()">Quanh đây</button>
+            </div>
+        </div>
+
+        <div class="room-list" id="roomList"></div>
+    </div>
+
+    <div id="compareBar" class="compare-bar">
+        <span>Đã chọn <b id="compareCount">0</b> phòng</span>
+        <button class="btn-compare-action" onclick="openCompareModal()">So Sánh Ngay</button>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="detail-modal-body">
+            <div class="detail-close-btn" onclick="closeDetailModal()">&times;</div>
+            <div class="detail-container">
+                <div class="detail-left">
+                    <img id="detailMainImg" class="detail-gallery-main" src="">
+                    <div id="detailThumbnails" class="thumbnail-container"></div>
+                    
+                    <h2 id="detailTitle" style="color: #d35400; margin-top: 20px; line-height: 1.4;"></h2>
+                    <div style="display: flex; gap: 20px; font-size: 1.2em; font-weight: bold; margin: 15px 0;">
+                        <span id="detailPrice" style="color: #e74c3c;"></span>
+                        <span id="detailArea"></span>
+                    </div>
+                    <p style="color: #7f8c8d; font-size: 15px;">📍 <span id="detailAddress"></span></p>
+                    
+                    <hr style="border: 0; border-top: 1px solid #ecf0f1; margin: 25px 0;">
+                    
+                    <h3 style="color: #2c3e50;">Thông tin mô tả</h3>
+                    <p id="detailDesc" style="line-height: 1.8; color: #444; white-space: pre-wrap; font-size: 15px;"></p>
+                </div>
+                
+                <div class="detail-right">
+                    <div class="lessor-card">
+                        <div class="lessor-avatar" id="detailAvatarInitial"></div>
+                        <h3 id="detailLessorName" style="margin: 0 0 5px 0; color: #2c3e50;"></h3>
+                        <span style="background: #f1c40f; font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: bold; color: #2c3e50;">Chính chủ</span>
+                        
+                        <button id="btnDetailCall" class="action-btn btn-call">📞 Gọi điện thoại</button>
+                        <button id="btnDetailChat" class="action-btn btn-chat">💬 Chat trực tiếp</button>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Báo cáo vi phạm</h4>
+                        <button class="btn-report" onclick="submitReport('Trùng lặp / Spam')">⚠️ Bài đăng trùng lặp, spam</button>
+                        <button class="btn-report" onclick="submitReport('Lừa đảo')">🚫 Dấu hiệu lừa đảo, scam</button>
+                        <button class="btn-report" onclick="submitReport('Phòng đã cho thuê')">🏠 Phòng đã cho thuê</button>
+                        <button class="btn-report" onclick="submitReport('Sai thông tin')">ℹ️ Thông tin không chính xác</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="compareModal" class="modal"></div>
+
+    <div id="chatModal" class="modal" style="align-items: center; justify-content: center; display: none;">
+        <div class="chat-modal-content">
+            <span class="close-btn" style="color:#333; top:10px; right:15px; font-size: 30px; position: absolute;" onclick="closeChatModal()">&times;</span>
+            <h3 id="chatRoomTitle" style="margin-top: 0;">Nhắn tin</h3>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-group">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
+                <button class="btn-send" onclick="sendMessage()">Gửi</button>
+            </div>
+            <input type="hidden" id="chatReceiverId">
+            <input type="hidden" id="chatRoomId">
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost/api/rooms.php';
+        const interactUrl = 'http://localhost/api/interaction.php';
+        let currentUser = JSON.parse(localStorage.getItem('user'));
+        let allRoomsData = [];
+        
+        let favorites = JSON.parse(localStorage.getItem('favorites'));
+        if (!Array.isArray(favorites)) favorites = [];
+        
+        let chatInterval = null;
+        let notifInterval = null;
+        let currentDetailRoomId = null;
+
+        function renderNavbar() {
+            const navLinks = document.getElementById('nav-links');
+            if (currentUser) {
+                let extra = currentUser.role === 'LESSOR' ? '<a href="create-room.html">Đăng phòng</a>' : (currentUser.role === 'ADMIN' ? '<a href="admin.html">Quản trị</a>' : '');
+                navLinks.innerHTML = `
+                    <div class="notif-badge" onclick="toggleNotif()">
+                        🔔 <span class="notif-count" id="notifCount">0</span>
+                        <div class="notif-dropdown" id="notifDropdown"></div>
+                    </div>
+                    ${extra}
+                    <span style="margin-left: 10px;">Chào, <b>${currentUser.username}</b></span>
+                    <a href="#" onclick="logout()">Thoát</a>
+                `;
+                loadNotifications();
+                if(notifInterval) clearInterval(notifInterval);
+                notifInterval = setInterval(loadNotifications, 5000);
+            } else {
+                navLinks.innerHTML = '<a href="login.html">Đăng nhập</a><a href="register.html">Đăng ký</a>';
+            }
+        }
+
+        function logout() { localStorage.removeItem('user'); window.location.reload(); }
+
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(`${interactUrl}?action=get_notifications&user_id=${currentUser.id}`);
+                if(res.ok) {
+                    const data = await res.json();
+                    const dropdown = document.getElementById('notifDropdown');
+                    document.getElementById('notifCount').innerText = data.filter(n => n.is_read == 0).length;
+                    dropdown.innerHTML = data.length > 0 ? data.map(n => {
+                        const match = n.message.match(/ID (\d+)/);
+                        const clickAttr = match ? `onclick="openDetailModal(${match[1]}); document.getElementById('notifDropdown').style.display='none';"` : '';
+                        const pointerStyle = match ? 'cursor: pointer;' : '';
+                        
+                        return `
+                            <div class="notif-item ${n.is_read == 0 ? 'unread' : ''}" ${clickAttr} style="${pointerStyle}">
+                                <div>${n.message}</div>
+                                <span class="notif-time">🕒 ${n.created_at}</span>
+                            </div>
+                        `;
+                    }).join('') : '<div class="notif-empty">Hiện không có thông báo nào</div>';
+                }
+            } catch(e) {}
+        }
+
+        async function toggleNotif() {
+            const d = document.getElementById('notifDropdown');
+            const countSpan = document.getElementById('notifCount');
+            
+            if (d.style.display === 'block') {
+                d.style.display = 'none';
+            } else {
+                d.style.display = 'block';
+                if (parseInt(countSpan.innerText) > 0) {
+                    countSpan.innerText = '0';
+                    document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+                    try {
+                        await fetch(`${interactUrl}?action=mark_notifications_read`, {
+                            method: 'POST',
+                            body: JSON.stringify({ user_id: currentUser.id })
+                        });
+                    } catch(e) {}
+                }
+            }
+        }
+
+        async function fetchRooms(queryString = '') {
+            try {
+                const response = await fetch(apiUrl + queryString);
+                if (response.ok) {
+                    const data = await response.json();
+                    allRoomsData = data.records;
+                    displayRooms(allRoomsData);
+                    checkCompareBar();
+                } else {
+                    document.getElementById('roomList').innerHTML = '<p style="text-align:center">Không tìm thấy phòng nào phù hợp.</p>';
+                }
+            } catch (e) { 
+                document.getElementById('roomList').innerHTML = '<p style="text-align:center;color:red;">Lỗi kết nối máy chủ.</p>';
+            }
+        }
+
+        function displayRooms(rooms) {
+            const list = document.getElementById('roomList');
+            list.innerHTML = '';
+            rooms.forEach(room => {
+                const card = document.createElement('div');
+                card.className = 'room-card';
+                card.onclick = (e) => {
+                    if(!e.target.classList.contains('btn-fav')) {
+                        openDetailModal(room.id);
+                    }
+                };
+
+                const price = new Intl.NumberFormat('vi-VN').format(room.price);
+                const imgs = room.image_url ? room.image_url.split(',') : ['no-image.jpg'];
+                const isFav = favorites.includes(room.id);
+
+                card.innerHTML = `
+                    <div class="lessor-badge">👤 ${room.lessor_name}</div>
+                    <img src="/${imgs[0]}" class="room-card-img">
+                    <div class="room-card-content">
+                        <div>
+                            <h3 class="room-title">${room.title}</h3>
+                            <div class="room-meta">
+                                <span class="room-price">${price} đ/tháng</span>
+                                <span style="color:#7f8c8d;">· ${room.area} m²</span>
+                            </div>
+                            <p class="room-address">📍 ${room.address}</p>
+                            <p class="room-desc-short">${room.description || 'Đang cập nhật mô tả...'}</p>
+                        </div>
+                    </div>
+                    <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite(event, ${room.id})">${isFav ? '❤️' : '🤍'}</button>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function toggleFavorite(event, id) {
+            event.stopPropagation();
+            const i = favorites.indexOf(id);
+            if (i > -1) favorites.splice(i, 1);
+            else if (favorites.length < 2) favorites.push(id);
+            else { alert('Chỉ chọn tối đa 2 phòng để so sánh!'); return; }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            displayRooms(allRoomsData);
+            checkCompareBar();
+        }
+
+        function checkCompareBar() {
+            const bar = document.getElementById('compareBar');
+            document.getElementById('compareCount').innerText = favorites.length;
+            bar.style.display = favorites.length > 0 ? 'block' : 'none';
+        }
+
+        function openDetailModal(id) {
+            const room = allRoomsData.find(r => r.id === id);
+            if(!room) return;
+            currentDetailRoomId = id;
+
+            const imgs = room.image_url ? room.image_url.split(',') : ['no-image.jpg'];
+            const price = new Intl.NumberFormat('vi-VN').format(room.price);
+
+            document.getElementById('detailMainImg').src = '/' + imgs[0];
+            const thumbBox = document.getElementById('detailThumbnails');
+            thumbBox.innerHTML = '';
+            imgs.forEach((url, i) => {
+                const img = document.createElement('img');
+                img.src = '/' + url;
+                if(i === 0) img.className = 'active';
+                img.onclick = () => {
+                    document.getElementById('detailMainImg').src = '/' + url;
+                    document.querySelectorAll('#detailThumbnails img').forEach(x => x.classList.remove('active'));
+                    img.classList.add('active');
+                };
+                thumbBox.appendChild(img);
+            });
+
+            document.getElementById('detailTitle').innerText = room.title;
+            document.getElementById('detailPrice').innerText = price + ' VNĐ / tháng';
+            document.getElementById('detailArea').innerText = room.area + ' m²';
+            document.getElementById('detailAddress').innerText = room.address;
+            document.getElementById('detailDesc').innerText = room.description || 'Chưa có mô tả chi tiết.';
+            
+            document.getElementById('detailLessorName').innerText = room.lessor_name;
+            document.getElementById('detailAvatarInitial').innerText = room.lessor_name.charAt(0).toUpperCase();
+
+            document.getElementById('btnDetailCall').onclick = () => {
+                alert('Số điện thoại liên hệ: ' + room.phone);
+            };
+
+            document.getElementById('btnDetailChat').onclick = () => {
+                openChatModal(room.id, room.lessor_id, room.title);
+            };
+
+            document.getElementById('detailModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentDetailRoomId = null;
+        }
+
+        async function submitReport(type) {
+            if(!currentUser) {
+                alert("Vui lòng đăng nhập để gửi báo cáo!");
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${interactUrl}?action=submit_report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        room_id: currentDetailRoomId, 
+                        report_type: type 
+                    })
+                });
+
+                if(res.ok) {
+                    alert(`Cảm ơn bạn! Báo cáo [${type}] đối với bài đăng này đã được gửi tới Quản trị viên để kiểm tra.`);
+                } else {
+                    alert("Đã xảy ra lỗi từ phía máy chủ.");
+                }
+            } catch(e) {
+                alert("Lỗi kết nối mạng khi gửi báo cáo.");
+            }
+        }
+
+        function openChatModal(roomId, lessorId, roomTitle) {
+            if (!currentUser) { alert('Vui lòng đăng nhập để nhắn tin!'); window.location.href = 'login.html'; return; }
+            document.getElementById('chatRoomTitle').innerText = "Chat: " + roomTitle;
+            document.getElementById('chatReceiverId').value = lessorId;
+            document.getElementById('chatRoomId').value = roomId;
+            document.getElementById('chatModal').style.display = 'flex';
+            
+            loadMessages(roomId);
+            if(chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(() => loadMessages(roomId), 2000);
+        }
+
+        function closeChatModal() { 
+            document.getElementById('chatModal').style.display = 'none'; 
+            if(chatInterval) clearInterval(chatInterval);
+        }
+
+        async function loadMessages(roomId) {
+            const box = document.getElementById('chatMessages');
+            try {
+                const res = await fetch(`${interactUrl}?action=get_messages&room_id=${roomId}`);
+                const textResponse = await res.text();
+                try {
+                    const data = JSON.parse(textResponse);
+                    if (data && data.length > 0) {
+                        let htmlStr = '';
+                        data.forEach(msg => {
+                            const isMe = msg.sender_id == currentUser.id;
+                            htmlStr += `<div class="chat-msg ${isMe ? 'me' : 'them'}"><b>${msg.sender_name}:</b> ${msg.message_text}</div>`;
+                        });
+                        if (box.innerHTML !== htmlStr) {
+                            box.innerHTML = htmlStr;
+                            box.scrollTop = box.scrollHeight;
+                        }
+                    } else {
+                        box.innerHTML = '<div style="text-align:center; color:#888; margin-top:20px;">Hãy gửi tin nhắn đầu tiên để bắt đầu!</div>';
+                    }
+                } catch (e) {}
+            } catch(e) {}
+        }
+
+        async function sendMessage() {
+            const text = document.getElementById('chatInput').value;
+            const receiverId = document.getElementById('chatReceiverId').value;
+            const roomId = document.getElementById('chatRoomId').value;
+            if(!text.trim()) return;
+
+            const res = await fetch(`${interactUrl}?action=send_message`, {
+                method: 'POST',
+                body: JSON.stringify({ sender_id: currentUser.id, receiver_id: receiverId, room_id: roomId, message_text: text })
+            });
+
+            if(res.ok) {
+                document.getElementById('chatInput').value = '';
+                loadMessages(roomId);
+            }
+        }
+
+        function applyFilters() {
+            const loc = document.getElementById('fLocation').value;
+            const pRange = document.getElementById('fPriceRange').value;
+            const aRange = document.getElementById('fAreaRange').value;
+            let query = '?status=APPROVED';
+            if (loc) query += `&location=${encodeURIComponent(loc)}`;
+            if (pRange) { const p = pRange.split('-'); query += `&min_price=${p[0]}&max_price=${p[1]}`; }
+            if (aRange) { const a = aRange.split('-'); query += `&min_area=${a[0]}&max_area=${a[1]}`; }
+            fetchRooms(query);
+        }
+
+        function findNearMe() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    fetchRooms(`?status=APPROVED&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&radius=5`);
+                });
+            }
+        }
+
+        renderNavbar();
+        fetchRooms();
+    </script>
+</body>
+</html>

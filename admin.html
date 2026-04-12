@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý phòng</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #2c3e50; color: white; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: #34495e; padding: 20px; border-radius: 8px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; background: #7f8c8d; color: white; font-weight: bold; }
+        .tab-btn.active { background: #3498db; }
+        table { width: 100%; border-collapse: collapse; background: #fff; color: #333; }
+        th, td { padding: 12px; border: 1px solid #bdc3c7; text-align: left; }
+        th { background-color: #2980b9; color: white; }
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; margin-right: 5px; }
+        .btn-approve { background-color: #27ae60; }
+        .btn-reject { background-color: #e67e22; }
+        .btn-delete { background-color: #c0392b; }
+        img.preview { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bảng Điều Khiển Quản Trị</h2>
+        
+        <div class="tabs">
+            <button id="btnPending" class="tab-btn active" onclick="switchTab('PENDING')">Chờ Duyệt</button>
+            <button id="btnApproved" class="tab-btn" onclick="switchTab('APPROVED')">Đang Hiển Thị</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tiêu đề</th>
+                    <th>Giá</th>
+                    <th>Địa chỉ</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="roomTableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost/api/rooms.php';
+        let currentStatus = 'PENDING';
+
+        function checkAuth() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'ADMIN') {
+                window.location.href = 'login.html';
+            }
+        }
+
+        function switchTab(status) {
+            currentStatus = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(status === 'PENDING') document.getElementById('btnPending').classList.add('active');
+            else document.getElementById('btnApproved').classList.add('active');
+            loadRooms();
+        }
+
+        async function loadRooms() {
+            const tbody = document.getElementById('roomTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Đang tải...</td></tr>';
+            
+            try {
+                const response = await fetch(`${apiUrl}?status=${currentStatus}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    tbody.innerHTML = '';
+                    data.records.forEach(room => {
+                        const firstImg = room.image_url ? room.image_url.split(',')[0] : 'no-image.jpg';
+                        const price = new Intl.NumberFormat('vi-VN').format(room.price) + 'đ';
+                        
+                        let actions = '';
+                        if(currentStatus === 'PENDING') {
+                            actions = `
+                                <button class="btn btn-approve" onclick="updateStatus(${room.id}, 'APPROVED')">Duyệt</button>
+                                <button class="btn btn-reject" onclick="updateStatus(${room.id}, 'REJECTED')">Từ chối</button>
+                            `;
+                        } else {
+                            actions = `
+                                <button class="btn btn-delete" onclick="deleteRoom(${room.id})">Xóa bài</button>
+                            `;
+                        }
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><img src="/${firstImg}" class="preview"></td>
+                                <td>${room.title}</td>
+                                <td style="color:#e74c3c; font-weight:bold;">${price}</td>
+                                <td>${room.address}</td>
+                                <td>${actions}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Trống.</td></tr>';
+                }
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Lỗi kết nối.</td></tr>';
+            }
+        }
+
+        async function updateStatus(id, status) {
+            let reason = status === 'REJECTED' ? prompt("Lý do từ chối:") : null;
+            if(status === 'REJECTED' && !reason) return;
+
+            const res = await fetch(apiUrl, {
+                method: 'PUT',
+                body: JSON.stringify({ id, status, rejection_reason: reason })
+            });
+            if(res.ok) loadRooms();
+        }
+
+        async function deleteRoom(id) {
+            if(!confirm("Bạn chắc chắn muốn xóa vĩnh viễn bài đăng này?")) return;
+            
+            const res = await fetch(apiUrl, {
+                method: 'DELETE',
+                body: JSON.stringify({ id })
+            });
+            if(res.ok) {
+                alert("Đã xóa bài!");
+                loadRooms();
+            }
+        }
+
+        checkAuth();
+        loadRooms();
+    </script>
+</body>
+</html>
