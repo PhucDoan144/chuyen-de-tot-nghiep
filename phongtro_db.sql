@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 04, 2026 lúc 08:49 AM
+-- Thời gian đã tạo: Th6 09, 2026 lúc 03:35 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -64,13 +64,8 @@ CREATE TABLE `chi_tiet_tien_ich` (
 --
 
 INSERT INTO `chi_tiet_tien_ich` (`ma_phong`, `ma_tien_ich`) VALUES
-(8, 1),
-(8, 2),
-(8, 5),
 (10, 1),
-(10, 2),
-(16, 1),
-(16, 5);
+(10, 2);
 
 -- --------------------------------------------------------
 
@@ -152,10 +147,7 @@ INSERT INTO `hinh_anh_phong` (`ma_anh`, `ma_phong`, `duong_dan`) VALUES
 (29, 10, 'api/uploads/1780509346_nha6-1.jpg'),
 (30, 10, 'api/uploads/1780509346_nha6-2.jpg'),
 (31, 10, 'api/uploads/1780509346_nha6-3.jpg'),
-(32, 10, 'api/uploads/1780509346_nha6-4.jpg'),
-(33, 16, 'api/uploads/1780549461_nha4-2.jpg'),
-(34, 16, 'api/uploads/1780549461_nha7.jpg'),
-(35, 16, 'api/uploads/1780549461_nha7-1.jpg');
+(32, 10, 'api/uploads/1780509346_nha6-4.jpg');
 
 -- --------------------------------------------------------
 
@@ -184,7 +176,16 @@ CREATE TABLE `hoa_don` (
 --
 
 INSERT INTO `hoa_don` (`ma_hoa_don`, `ma_phong`, `ma_nguoi_thue`, `thang_nam`, `tien_phong`, `tien_dien`, `tien_nuoc`, `tien_internet`, `tien_rac`, `tien_dich_vu_khac`, `tong_tien`, `trang_thai`, `ngay_tao`) VALUES
-(1, 8, 1, '06/2026', 2500000.00, 500000.00, 200000.00, 100000.00, 50000.00, 0.00, 3350000.00, 'CHO_XAC_NHAN', '2026-06-04 11:08:55');
+(1, 8, 1, '06/2026', 2500000.00, 500000.00, 200000.00, 100000.00, 50000.00, 0.00, 3350000.00, 'DA_THANH_TOAN', '2026-06-04 11:08:55'),
+(2, 8, 1, '06/2026', 2500000.00, 2000000.00, 100000.00, 40000.00, 0.00, 0.00, 4640000.00, 'DA_THANH_TOAN', '2026-06-06 14:11:43'),
+(3, 8, 1, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-06 14:38:10'),
+(4, 10, 7, '06/2026', 1300000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1300000.00, 'DA_THANH_TOAN', '2026-06-09 14:47:27'),
+(5, 10, 7, '06/2026', 1300000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1300000.00, 'DA_THANH_TOAN', '2026-06-09 14:54:00'),
+(6, 8, 7, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-09 14:55:08'),
+(7, 8, 7, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-09 15:02:45'),
+(8, 8, 7, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-09 18:37:45'),
+(9, 8, 7, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-09 19:09:23'),
+(10, 8, 7, '06/2026', 2500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 2500000.00, 'DA_THANH_TOAN', '2026-06-09 20:18:19');
 
 -- --------------------------------------------------------
 
@@ -224,15 +225,22 @@ CREATE TABLE `hop_dong` (
   `ngay_bat_dau` date NOT NULL,
   `ngay_ket_thuc` date NOT NULL,
   `trang_thai` enum('CHO_KY','DA_KY','DA_HUY') DEFAULT 'CHO_KY',
-  `ngay_tao` timestamp NOT NULL DEFAULT current_timestamp()
+  `ngay_tao` timestamp NOT NULL DEFAULT current_timestamp(),
+  `so_luong_nguoi_o` int(11) DEFAULT 1 COMMENT 'Số người ở thực tế trong phòng'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `hop_dong`
 --
 
-INSERT INTO `hop_dong` (`ma_hop_dong`, `ma_phong`, `ma_chu_tro`, `ma_nguoi_thue`, `tien_coc`, `gia_thue_thang`, `ngay_bat_dau`, `ngay_ket_thuc`, `trang_thai`, `ngay_tao`) VALUES
-(4, 8, 2, 1, 2000000.00, 2000000.00, '2026-06-04', '2026-09-04', 'CHO_KY', '2026-06-03 20:11:09');
+INSERT INTO `hop_dong` (`ma_hop_dong`, `ma_phong`, `ma_chu_tro`, `ma_nguoi_thue`, `tien_coc`, `gia_thue_thang`, `ngay_bat_dau`, `ngay_ket_thuc`, `trang_thai`, `ngay_tao`, `so_luong_nguoi_o`) VALUES
+(4, 8, 2, 1, 2000000.00, 2000000.00, '2026-06-04', '2026-09-04', 'CHO_KY', '2026-06-03 20:11:09', 1),
+(20, 9, 2, 1, 4000000.00, 2000000.00, '2026-06-09', '2027-04-09', 'CHO_KY', '2026-06-09 07:00:04', 4),
+(21, 10, 2, 7, 2600000.00, 1300000.00, '2026-06-20', '2027-01-09', 'CHO_KY', '2026-06-09 07:46:48', 2),
+(22, 8, 2, 7, 5000000.00, 2500000.00, '2026-06-09', '2026-06-09', 'CHO_KY', '2026-06-09 07:54:26', 1),
+(24, 8, 2, 7, 5000000.00, 2500000.00, '2026-06-09', '2026-07-09', 'CHO_KY', '2026-06-09 11:41:37', 2),
+(25, 10, 2, 7, 2600000.00, 1300000.00, '2026-06-09', '2026-07-09', 'CHO_KY', '2026-06-09 11:57:03', 1),
+(26, 8, 2, 1, 5000000.00, 2500000.00, '2026-06-09', '2026-07-09', 'CHO_KY', '2026-06-09 11:57:20', 1);
 
 -- --------------------------------------------------------
 
@@ -288,8 +296,9 @@ INSERT INTO `nguoi_dung` (`ma_nguoi_dung`, `ten_dang_nhap`, `mat_khau`, `so_dien
 (2, 'linh', '0954253377', '0954253377', 'kinolaem@gmail.com', 'api/uploads/avatars/1780469934_1775196727_IMG_20260222_115924_170.jpg', 'LESSOR', 0, '2026-06-03 05:09:02', 'HOP_LE'),
 (3, 'admin', '0954253377', '0954253377', NULL, 'default-avatar.png', 'ADMIN', 0, '2026-06-03 05:10:55', 'HOP_LE'),
 (4, 'ha', '0954253377', '0954253377', 'kinolaem@gmail.com', 'default-avatar.png', 'LESSOR', 0, '2026-06-03 11:25:00', 'HOP_LE'),
-(5, 'chinh', '0954253377', '0954253377', 'kaitokino144@gmail.com', 'default-avatar.png', 'LESSEE', 0, '2026-06-03 11:25:32', 'HOP_LE'),
-(6, 'huy', '$2y$10$PAdySNhzDoLF3b6YjthneO0lxYB.zrbRFDtlEUYbzArsW5SHK0JV6', '0905993378', 'kinolaem@gmail.com', 'default-avatar.png', 'LESSOR', 0, '2026-06-04 04:36:45', 'HOP_LE');
+(7, 'tan123', '$2y$10$HqlzuXOvs6alQaD2suND5.VaR1aIg5IXF03hF05Nr5lcHFh2OTqoe', '0954253377', 'phuc.dn.62cntt@ntu.edu.vn', 'default-avatar.png', '', 0, '2026-06-09 07:29:19', 'HOP_LE'),
+(8, 'phuc123', '$2y$10$HrztmmkNkeYiHbSdPTg4veZzFJt5NamyhBRr8VWtuYl7C.grCpI16', '0954253377', 'hoprtep@gmail.com', 'default-avatar.png', '', 0, '2026-06-09 13:20:17', 'HOP_LE'),
+(9, 'chinh', '$2y$10$vPcGYs028CfAjUCBiPWmjeL0Q6wj5t4iMpIQ61bPP2KVSH90TWy8i', '0954253377', 'kaitokino144@gmail.com', 'default-avatar.png', '', 0, '2026-06-09 13:34:33', 'HOP_LE');
 
 -- --------------------------------------------------------
 
@@ -328,13 +337,12 @@ CREATE TABLE `phong_tro` (
 --
 
 INSERT INTO `phong_tro` (`ma_phong`, `ma_chu_tro`, `ma_loai`, `tieu_de`, `mo_ta`, `gia_thue`, `dien_tich`, `so_luong_trong`, `dia_chi`, `vi_do`, `kinh_do`, `duong_dan_anh`, `trang_thai`, `ly_do_tu_choi`, `co_internet`, `co_may_lanh`, `co_don_phong`, `bao_rac`, `bao_dien_nuoc`, `ngay_tao`, `latitude`, `longitude`, `tien_ich`) VALUES
-(5, 4, NULL, 'Cho thuê nhà nguyên căn', 'Dt 60m, nhà trống không nội thất\r\n1pn 1pk bếp phía sau có không gian phơi đồ mát mẻ \r\n-Giá chốt 3.5tr/tháng, cọc 2 tt1. ', 3500000.00, 60.00, 1, 'hẻm 58 lương định của , nha trang', 12.25682501, 109.17378501, NULL, 'CHO_DUYET', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:32:32', '12.24507', '109.19432', ''),
+(5, 4, NULL, 'Cho thuê nhà nguyên căn', 'Dt 60m, nhà trống không nội thất\r\n1pn 1pk bếp phía sau có không gian phơi đồ mát mẻ \r\n-Giá chốt 3.5tr/tháng, cọc 2 tt1. ', 3500000.00, 60.00, 1, 'hẻm 58 lương định của , nha trang', 12.25682501, 109.17378501, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:32:32', '12.24507', '109.19432', ''),
 (6, 4, NULL, 'Cho thuê phòng trọ', 'Phòng sạch sẽ, cách biển 1 phút đi bộ, toà nhà được trang bị hệ thống báo cháy, cửa chống cháy cầu thang đảm bảo an toàn khi có cháy nổ. Có máy nước nóng, ban công ngắm cảnh, kệ nấu ăn, cây phơi đồ, wifi, bảo vệ chuyên nghiệp, thang máy, lau dọn, toilet trang bị đồ inox cao cấp, hệ thống camera quan sát, bảo vệ chuyên nghiệp, ra vào bằng thẻ từ, nhà để xe rộng rãi. Nằm ngay ngã 3 thuận tiện đi lại, cách biển 60m 1 phút đi bộ, gần chợ, cửa hàng tiện lợi, trường học, khu dân cư quân đội của trường Sỹ Quan Thông Tin, đảm bảo an ninh', 2300000.00, 20.00, 1, 'Phố Phan Phù Tiên, Phường Vĩnh Hải, Thành phố Nha Trang, Khánh Hòa', 12.28095449, 109.18739861, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:37:58', '12.24507', '109.19432', ''),
-(7, 4, NULL, 'Cho thuê phòng trọ ngay trung tâm TP Nha Trang', 'DT: 25m², có gác lửng, toilet riêng, an ninh, yên tĩnh thoáng mát, giờ giấc tự do.', 2200000.00, 25.00, 1, '159 đường Nguyễn Khuyến, phường Vĩnh Hải, Nha Trang', 12.27881203, 109.18600886, NULL, 'CHO_DUYET', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:41:55', '12.24507', '109.19432', ''),
-(8, 2, NULL, 'Phòng trọ đẹp, tiện nghi, giá rẻ, trung tâm Nha Trang', 'Chính chủ cho thuê dãy phòng trọ mới xây, tiện nghi, thoáng mát, trung tâm TP Nha Trang.\r\nWIFI miễn phí. Điện nước giá rẻ. Lối đi riêng, không chung chủ. Chỗ để xe rộng rãi. Khu vực an ninh, yên tĩnh.', 2500000.00, 25.00, 6, '12 Hải Nam, phường Vĩnh Hải, Nha Trang.', 12.27895609, 109.19961492, NULL, 'DA_CHO_THUE', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:46:57', '12.24507', '109.19432', ''),
-(9, 2, NULL, 'Nhà Trọ CÁT TIÊN', 'Phòng ở dành cho hộ gia đình có trẻ em, khu yên tĩnh.\r\nHĐ 6 tháng, giờ giấc tự do có chìa khóa cổng riêng.', 2000000.00, 25.00, 5, 'Võ Cạnh, Tây Nha Trang, Khánh Hòa, Việt Nam', 12.25790488, 109.12531761, NULL, 'CHO_DUYET', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:52:14', '12.24507', '109.19432', ''),
-(10, 2, NULL, 'CHO THUÊ PHÒNG TRỌ ', '+Có bếp nấu ăn\r\n+Diện rích :20m2 có gác lửng (rộng rãi . Sạch sẽ )\r\n+Cổng riêng không chung chủ, giờ giấc tự do thoải mái 😘\r\n+Không ngập lụt vào mùa mưa\r\n+Chủ dễ tính vui vẻ và thân thiện có thể qua chuyện trò tâm sự 🥰\r\n- khu vực yên tĩnh vắng người có không gian riêng tư\r\nĐiện 3500đ/kw, nước 10k một khối', 1300000.00, 20.00, 6, '+Tổ 17 Thôn Xuân Ngọc xã Vĩnh Ngọc thành phố Nha Trang ( gần đầu cầu gỗ , phú kiểng)', 12.27508276, 109.16824187, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:55:46', '12.24507', '109.19432', ''),
-(16, 6, 1, '🏠 Phòng trọ cho thuê – Tây Nha Trang', ' Trang bị sẵn:\r\n• Máy lạnh\r\n• Tủ lạnh\r\n• Máy giặt\r\n• Máy nước nóng\r\n• gương soi\r\n• nệm\r\n⚡ Điện+ Wifi+ rác: 4.000đ/kWh\r\n💧 Nước: 12.000đ/m³\r\n. Ở được 2 người.\r\n🛵 Chỉ khoảng 4 phút đi xe máy đến trung tâm', 2200000.00, 20.00, 1, '358/42 Hương Lộ Ngọc Hiệp, Tây Nha Trang', 12.24507000, 109.19432000, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-04 05:04:21', '12.24507', '109.19432', '');
+(7, 4, NULL, 'Cho thuê phòng trọ ngay trung tâm TP Nha Trang', 'DT: 25m², có gác lửng, toilet riêng, an ninh, yên tĩnh thoáng mát, giờ giấc tự do.', 2200000.00, 25.00, 1, '159 đường Nguyễn Khuyến, phường Vĩnh Hải, Nha Trang', 12.27881203, 109.18600886, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:41:55', '12.24507', '109.19432', ''),
+(8, 2, NULL, 'Phòng trọ đẹp, tiện nghi, giá rẻ, trung tâm Nha Trang', 'Chính chủ cho thuê dãy phòng trọ mới xây, tiện nghi, thoáng mát, trung tâm TP Nha Trang.\r\nWIFI miễn phí. Điện nước giá rẻ. Lối đi riêng, không chung chủ. Chỗ để xe rộng rãi. Khu vực an ninh, yên tĩnh.', 2500000.00, 25.00, 3, '12 Hải Nam, phường Vĩnh Hải, Nha Trang.', 12.27895609, 109.19961492, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:46:57', '12.24507', '109.19432', ''),
+(9, 2, NULL, 'Nhà Trọ CÁT TIÊN', 'Phòng ở dành cho hộ gia đình có trẻ em, khu yên tĩnh.\r\nHĐ 6 tháng, giờ giấc tự do có chìa khóa cổng riêng.', 2000000.00, 25.00, 3, 'Võ Cạnh, Tây Nha Trang, Khánh Hòa, Việt Nam', 12.25790488, 109.12531761, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:52:14', '12.24507', '109.19432', ''),
+(10, 2, NULL, 'CHO THUÊ PHÒNG TRỌ ', '+Có bếp nấu ăn\r\n+Diện rích :20m2 có gác lửng (rộng rãi . Sạch sẽ )\r\n+Cổng riêng không chung chủ, giờ giấc tự do thoải mái 😘\r\n+Không ngập lụt vào mùa mưa\r\n+Chủ dễ tính vui vẻ và thân thiện có thể qua chuyện trò tâm sự 🥰\r\n- khu vực yên tĩnh vắng người có không gian riêng tư\r\nĐiện 3500đ/kw, nước 10k một khối', 1300000.00, 20.00, 4, '+Tổ 17 Thôn Xuân Ngọc xã Vĩnh Ngọc thành phố Nha Trang ( gần đầu cầu gỗ , phú kiểng)', 12.27508276, 109.16824187, NULL, 'DANG_HIEN_THI', NULL, 0, 0, 0, 0, 0, '2026-06-03 17:55:46', '12.24507', '109.19432', '');
 
 -- --------------------------------------------------------
 
@@ -362,7 +370,42 @@ INSERT INTO `thong_bao` (`ma_thong_bao`, `ma_nguoi_nhan`, `noi_dung`, `trang_tha
 (5, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-04 03:11:12'),
 (6, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-04 03:11:12'),
 (7, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-04 03:11:13'),
-(8, 5, '⚠️ CẢNH BÁO TỪ BỘ PHẬN QUẢN TRỊ: tài khoản cần thêm hình ảnh xác thực (Vui lòng tuân thủ quy định để tránh bị khóa tài khoản vĩnh viễn).', 1, '2026-06-04 11:18:52');
+(8, 5, '⚠️ CẢNH BÁO TỪ BỘ PHẬN QUẢN TRỊ: tài khoản cần thêm hình ảnh xác thực (Vui lòng tuân thủ quy định để tránh bị khóa tài khoản vĩnh viễn).', 1, '2026-06-04 11:18:52'),
+(9, 1, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 1, '2026-06-06 14:11:18'),
+(10, 1, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 4.640.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-06 14:11:43'),
+(11, 1, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-06 14:38:10'),
+(12, 2, 'Khách hàng phuc144 (ID: 1) muốn thuê phòng \'CHO THUÊ PHÒNG TRỌ \' (Mã phòng: 10)', 1, '2026-06-07 14:44:50'),
+(13, 4, 'Khách hàng phuc144 (ID: 1) muốn thuê phòng \'Cho thuê phòng trọ ngay trung tâm TP Nha Trang\' (Mã phòng: 7)', 0, '2026-06-09 13:43:00'),
+(14, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:45'),
+(15, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:47'),
+(16, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:47'),
+(17, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:47'),
+(18, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:47'),
+(19, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:47'),
+(20, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:51:48'),
+(21, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:54:11'),
+(22, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 10). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:58:47'),
+(23, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 13:59:44'),
+(24, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 9). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 14:00:04'),
+(25, 7, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 10). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 14:46:48'),
+(26, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 1.300.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-09 14:47:27'),
+(27, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 1.300.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-09 14:54:00'),
+(28, 7, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 14:54:26'),
+(29, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-09 14:55:08'),
+(30, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ. Vui lòng kiểm tra và thanh toán.', 1, '2026-06-09 15:02:45'),
+(31, 7, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 15:13:56'),
+(32, 7, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 1, '2026-06-09 15:21:43'),
+(33, 7, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 1, '2026-06-09 15:21:45'),
+(34, 7, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 1, '2026-06-09 15:21:46'),
+(35, 7, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 1, '2026-06-09 15:21:48'),
+(36, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ.', 1, '2026-06-09 18:37:45'),
+(37, 7, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 18:41:37'),
+(38, 7, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 10). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 18:57:03'),
+(39, 1, 'Chủ trọ đã gửi cho bạn một Hợp Đồng Thuê Phòng (Mã phòng: 8). Vui lòng vào mục Hợp đồng trên thanh Menu để xem chi tiết.', 1, '2026-06-09 18:57:20'),
+(40, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ.', 1, '2026-06-09 19:09:23'),
+(41, 7, '🔔 Chủ trọ vừa lập hóa đơn mới kỳ 06/2026. Tổng tiền: 2.500.000 VNĐ.', 1, '2026-06-09 20:18:19'),
+(42, 2, '💰 Khách thuê phòng [Phòng trọ đẹp, tiện nghi, giá rẻ, trung tâm Nha Trang] vừa báo đã chuyển khoản hóa đơn kỳ 06/2026. Hãy kiểm tra tài khoản ngân hàng!', 1, '2026-06-09 20:18:41'),
+(43, 7, '✅ Chủ trọ đã xác nhận thu đủ tiền hóa đơn kỳ 06/2026 của bạn. Cảm ơn bạn!', 0, '2026-06-09 20:18:56');
 
 -- --------------------------------------------------------
 
@@ -575,7 +618,7 @@ ALTER TABLE `hinh_anh_phong`
 -- AUTO_INCREMENT cho bảng `hoa_don`
 --
 ALTER TABLE `hoa_don`
-  MODIFY `ma_hoa_don` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ma_hoa_don` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `hoa_don_loi_cu`
@@ -587,7 +630,7 @@ ALTER TABLE `hoa_don_loi_cu`
 -- AUTO_INCREMENT cho bảng `hop_dong`
 --
 ALTER TABLE `hop_dong`
-  MODIFY `ma_hop_dong` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ma_hop_dong` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT cho bảng `lich_su_thanh_toan`
@@ -605,7 +648,7 @@ ALTER TABLE `loai_phong`
 -- AUTO_INCREMENT cho bảng `nguoi_dung`
 --
 ALTER TABLE `nguoi_dung`
-  MODIFY `ma_nguoi_dung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ma_nguoi_dung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `phong_tro`
@@ -617,7 +660,7 @@ ALTER TABLE `phong_tro`
 -- AUTO_INCREMENT cho bảng `thong_bao`
 --
 ALTER TABLE `thong_bao`
-  MODIFY `ma_thong_bao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ma_thong_bao` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT cho bảng `tien_ich`
